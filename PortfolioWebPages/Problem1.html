@@ -1,0 +1,305 @@
+<!Doctype html>
+<html lang="en">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Problem 1</title>
+    </head>
+    <link rel = "stylesheet" href="portStyle.css"></link>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+   /* .filter-btn{
+        background-color: #fff;
+        color: #333;
+        border: 2px solid #333;
+        padding: 10px 20px;
+        margin: 0 5px;
+        float:right;
+        cursor: pointer;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }*/
+    :root{
+        --clr-dark:#222627;
+        --clr-light:#9ce2be;
+    }
+    body{
+        margin:0;
+        margin-top:0px;
+        font-family: 'Montserrat', sans-serif;
+        text-align: center;
+        color: var(--clr-dark);/*#12343b*/
+        background-color:var(--clr-light);
+        transition: background-color 0.9s, color 0.9s;
+    }
+    .dark-mode{
+        background-color:var(--clr-dark);
+        color:var(--clr-light);
+    }
+    .showcaseDivider{
+        display:flex-wrap;
+    }.problemTextDescript{
+        float:left;
+        width:75%;
+        padding:0% 5%;
+        align-self: start;
+    }#clear-button{
+        background-color:var(--clr-light);
+        float:right;
+        align-self:baseline;
+        position:absolute;
+        border: 2px solid #333;
+        padding: 10px;
+        margin: 0 5px;
+        float:right;
+        cursor: pointer;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        
+    }
+    .title{
+        font-size:1.9rem;
+    }
+    canvas{
+        background-color:#be9ce2;
+    }
+    .problemTextAndBtn{
+        display:flex;
+        flex-direction:row;
+        flex-wrap:nowrap;
+        justify-content:flex-start;
+        align-items:center;
+        align-content:center;
+        gap:2%;
+        padding-left:5%;
+        padding-right:5%;
+    }
+    #proof{
+        text-align:left;
+        padding:5% 5%;
+    }
+       
+    /* NAVIGATION BAR STYLING*/
+    ul{
+        z-index:100000;
+        position:sticky;
+        top:0; /*you need this for the navbar to actually be sticky*/
+        width:100%;
+        list-style-type:none;
+        margin:0;
+        padding:0;
+        display:flex;
+        justify-content:flex-start;
+        background-color:rgb(41, 52, 56);
+    }ul li{
+        float:left;}
+
+    ul li a{
+        display:block; 
+        color:white;
+        text-align:center;
+        padding:10px 16px;
+        text-decoration:none; 
+    }ul li a:hover{
+        background-color:yellow;
+    }#darkModeActivator{
+        margin-left:auto;
+        float:right;
+    }
+</style>
+<head>
+    <ul>
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="#proof">Proof</a></li>
+        <li id="darkModeActivator"><a href="javascript:void(0)" onclick="triggerDarkMode();"><span id="textOfDarkModeActivator">Dark Mode Activator</span></a></li>
+    </ul>
+</head>
+    <body>
+        <h1 class="title">A Quadrilaterial's Midpoints Form A Parallelogram</h1>
+        <div class="showcaseDivider">
+            <div class ="problemTextAndBtn">
+                <p class="problemTextDescript">Let A, B, C, and D be any four points in the plane, which form a quadrilaterial by joining them together. Then, the midpoints of the four sides are the vertices of a parallelogram.</p>
+                <button class="filter-btn" id="clearButton">Reset Canvas</button>
+            </div>
+            <canvas id = "showcase" width="500" height="400" style="border:2px solid #000000;">
+            </canvas>
+           </div>
+           <br>
+           <div id="proof">
+                <h2>Proof</h2>
+                <span>
+<p>Problem 1: Let A, B, C, and D be any four points on the plane and form a quadrilateral by joining them in that order; then, the midpoints of the four sides are the vertices of a parallelogram.</p>
+Definitions:
+A quadrilateral is a polygon with 4 sides.A parallelogram is a four-sided quadrilateral where opposite sides are parallel.Note: A quadrilateral is only a parallelogram, if and only if, its diagonals bisect each other.
+ Let $A$, $B$, $C$, $D$ be given with the midpoints $P$, $Q$, $R$, $S$. Since $P$, $Q$, $R$, $S$ are midpoints, by the midpoint formula:
+\[
+P = \frac{A + B}{2}, \quad Q = \frac{B + C}{2}, \quad R = \frac{C + D}{2}, \quad S = \frac{D + A}{2}.
+\]
+
+For $PQRS$ to be a parallelogram, the vectors formed by the midpoints, $\{\vec{PQ}, \vec{QR}, \vec{SR}, \vec{PS}\}$, must be parallel with their opposite-sided vector. In other words:
+\[
+\vec{PQ} \parallel \vec{SR} \quad \text{and} \quad \vec{PS} \parallel \vec{QR}.
+\]
+
+The vectors are given by:
+\[
+\vec{PQ} = Q - P, \quad \vec{SR} = R - S, \quad \vec{PS} = S - P, \quad \vec{QR} = R - Q.
+\]
+
+Since $\vec{PQ} \parallel \vec{SR}$, $\vec{PQ}$ must equal $\vec{SR}$,
+\[
+\vec{PQ} = \vec{SR} \Rightarrow Q - P = R - S.
+\]
+
+Substituting the midpoint definitions:
+\[
+\frac{B + C}{2} - \frac{A + B}{2} = \frac{C + D}{2} - \frac{D + A}{2}.
+\]
+
+Multiplying both sides by 2:
+\[
+(B + C) - (A + B) = (C + D) - (D + A).
+\]
+
+Simplifying:
+\[
+C - A = C - A.
+\]
+
+Similarly, $\vec{PS} \parallel \vec{QR}$, so $PQRS$ is a parallelogram. 
+
+                </span>
+           </div>
+    </body> 
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+
+    <script>
+//TRIGGER DARK MODE 
+const currentTheme = localStorage.getItem("preferredMode");
+if(currentTheme){
+    document.body.classList.add(currentTheme);
+}
+function triggerDarkMode(){
+    var element = document.body;
+    element.classList.toggle("dark-mode");
+    if(element.classList.contains("dark-mode")){
+        var textChange = document.getElementById("textOfDarkModeActivator");
+        textChange.innerHTML = "Light Mode Activator";
+        
+        //set their preference for dark 
+        localStorage.setItem("preferredMode","dark");
+    }else{
+        localStorage.setItem("preferredMode","light");
+    }
+
+}
+    //displaying MATH
+    MathJax = {
+  tex: {
+    inlineMath: {'[+]': [['$', '$']]}
+  }
+};
+        const canvas = document.getElementById("showcase");
+        const ctx = canvas.getContext("2d");
+    let points = [];
+
+        function getMousePos(canvas, event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            return [x, y];
+        }
+
+        function drawPoint(x, y, label) {
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            if (label) {
+                ctx.fillStyle = '#000';
+                ctx.font = '12px sans-serif';
+                ctx.fillText(label, x + 6, y - 6);
+            }
+        }
+
+        function drawLine(p1, p2, options = {}) {
+            ctx.strokeStyle = options.color || '#000';
+            ctx.lineWidth = options.width || 2;
+            ctx.beginPath();
+            ctx.moveTo(p1[0], p1[1]);
+            ctx.lineTo(p2[0], p2[1]);
+            ctx.stroke();
+        }
+
+        function midpoint(p1, p2) {
+            return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+        }
+
+        function drawQuadrilateralAndMidpoints() {
+            if (points.length < 4) return;
+
+            // Draw the quadrilateral
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < 4; i++) {
+                const p1 = points[i];
+                const p2 = points[(i + 1) % 4];
+                drawLine(p1, p2, { color: '#222', width: 2 });
+                drawPoint(p1[0], p1[1], `P${i + 1}`);
+            }
+
+            // Compute midpoints of each side
+            const mids = [];
+            for (let i = 0; i < 4; i++) {
+                const p1 = points[i];
+                const p2 = points[(i + 1) % 4];
+                const m = midpoint(p1, p2);
+                mids.push(m);
+                // draw midpoint marker
+                ctx.fillStyle = '#e2be9c';
+                ctx.beginPath();
+                ctx.arc(m[0], m[1], 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'black'; //midpoint text color 
+                ctx.font = '11px sans-serif';
+                ctx.fillText(`M${i + 1}`, m[0] + 6, m[1] + 10); //text x, y  need to be offset so you can actually read/see them
+            }
+
+            // Draw parallelogram connecting midpoints in order
+            for (let i = 0; i < 4; i++) {
+                const a = mids[i];
+                const b = mids[(i + 1) % 4];
+                drawLine(a, b, { color: '#b30000', width: 2 });
+            }
+        }
+
+        // Click handling: gather exactly 4 points, then draw
+    let clickCount = 0;
+        function handleClick(event) {
+            if (clickCount >= 4) return;
+            const [x, y] = getMousePos(canvas, event);
+            points.push([x, y]);
+            clickCount += 1;
+            // mark the clicked point
+            drawPoint(x, y, `P${clickCount}`);
+            if (clickCount === 4) {
+                // Draw final shapes after a short delay to ensure last point is shown
+                setTimeout(() => drawQuadrilateralAndMidpoints(), 50);
+                canvas.removeEventListener('mousedown', handleClick);
+            }
+        }
+        canvas.addEventListener('mousedown', handleClick);
+
+       document.getElementById('clearButton').addEventListener('click',function(){
+            points = [];
+            clickCount = 0;
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#be9ce2";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.addEventListener('mousedown', handleClick);
+       });
+
+    </script>
+</html>
