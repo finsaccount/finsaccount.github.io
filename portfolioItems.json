@@ -1,0 +1,14 @@
+[
+    {
+        "path":"PortfolioWebPages/Problem1.html",
+        "tags":["Geometry","Parallelograms","Showcase"],
+        "image":"P1Image.png",
+        "title":"Problem 1: Parallelogram and Quadrilateral Proof"
+    },
+    {
+        "path":"PortfolioWebPages/BSC.html",
+        "tags":["Triangle","Geometry","Vectors"],
+        "image":"cbs.png",
+        "title":"BSC INEQUALITY"
+    }
+]

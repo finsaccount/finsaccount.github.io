@@ -1,0 +1,118 @@
+   :root {
+    --clr-dark: #222627;
+    --clr-light: #9ce2be;
+    --nav-bg: #293438;
+    --nav-text: #ffffff;
+    --nav-hover: #ffd700;
+    /* dark mode nav overrides */
+    --nav-bg-dark: #1f2a2a;
+    --nav-text-dark: #e6f7ee;
+    --nav-hover-dark: #555555;
+}
+
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    color: var(--clr-dark);
+    background-color: var(--clr-light);
+    transition: background-color 0.9s, color 0.9s;
+}
+    .dark-mode{
+        background-color:var(--clr-dark);
+        color:var(--clr-light);
+    }
+
+/* Dark mode navigation colors */
+.dark-mode nav {
+    background-color: var(--nav-bg-dark);
+}
+.dark-mode .navbar li a {
+    color: var(--nav-text-dark);
+}
+.dark-mode .navbar li a:hover {
+    background-color: var(--nav-hover-dark);
+    color: var(--nav-text-dark);
+}
+    .showcaseDivider{
+        display:flex-wrap;
+    }.problemTextDescript{
+        float:left;
+        width:75%;
+        padding:0% 5%;
+        align-self: start;
+    }#clear-button{
+        background-color:var(--clr-light);
+        float:right;
+        align-self:baseline;
+        position:absolute;
+        border: 2px solid #333;
+        padding: 10px;
+        margin: 0 5px;
+        float:right;
+        cursor: pointer;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        
+    }
+    .title{
+        font-size:1.9rem;
+    }
+    canvas{
+        background-color:#be9ce2;
+    }
+    .problemTextAndBtn{
+        display:flex;
+        flex-direction:row;
+        flex-wrap:nowrap;
+        justify-content:flex-start;
+        align-items:center;
+        align-content:center;
+        gap:2%;
+        padding-left:5%;
+        padding-right:5%;
+    }
+    #proof{
+        text-align:left;
+        padding:5% 5%;
+    }
+       
+/* Navigation Bar Styling */
+nav {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: var(--nav-bg);
+}
+
+.navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.navbar li {
+    display: flex;
+}
+
+.navbar li a {
+    display: block;
+    color: var(--nav-text);
+    text-align: center;
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar li a:hover {
+    background-color: var(--nav-hover);
+    color: var(--clr-dark);
+}
+
+#darkModeActivator {
+    margin-left: auto;
+}

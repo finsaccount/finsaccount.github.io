@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <script>
+        // Ensure the script runs after the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Select all filter buttons and portfolio items
+    const filterButtons = Array.from(document.querySelectorAll('.filter-btn'));
+    const portfolioItems = Array.from(document.querySelectorAll('.portfolio-item'));
+    const currentlyFilteringText = document.getElementById('currentlyFiltering');
+
+    // Keep a set of selected filters (empty = show all)
+    const selected = new Set();
+    // Keep sets for priority and deprioritize markers
+    const priority = new Set();
+    const deprio = new Set();
+
+    const updateCurrentlyFilteringText = () => {
+        if (!currentlyFilteringText) return;
+        if (selected.size === 0) {
+            currentlyFilteringText.innerText = 'Currently Filtering: All';
+        } else {
+            currentlyFilteringText.innerText = 'Currently Filtering: ' + Array.from(selected).join(', ');
+        }
+    };
+
+    // Function to filter portfolio items: show items that have ALL selected categories,
+    // then sort visible items by priority score and match count
+    const filterItems = () => {
+        if (selected.size === 0 && priority.size === 0 && deprio.size === 0) {
+            // no filters or markers: show all in original order
+            portfolioItems.forEach(item => {
+                item.style.display = 'block';
+                item.classList.add('fade-in');
+            });
+            updateCurrentlyFilteringText();
+            return;
+        }
+
+        const visible = [];
+        const hidden = [];
+
+        portfolioItems.forEach(item => {
+            const cats = (item.getAttribute('data-category') || '').split(/\s+/).filter(Boolean);
+            const hasAll = Array.from(selected).every(s => cats.includes(s));
+            if (selected.size > 0 && !hasAll) {
+                hidden.push(item);
+                item.style.display = 'none';
+                item.classList.remove('fade-in');
+                return;
+            }
+
+            // compute priority score: number of priority filters this item matches
+            let score = 0;
+            priority.forEach(pf => { if (cats.includes(pf)) score += 1; });
+            // deprioritize reduces score
+            deprio.forEach(df => { if (cats.includes(df)) score -= 1; });
+
+            const matchCount = cats.filter(c => selected.has(c)).length;
+            visible.push({ item, score, matchCount });
+        });
+
+        // Sort visible items: higher score first, then more selected-category matches
+        visible.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            if (b.matchCount !== a.matchCount) return b.matchCount - a.matchCount;
+            return 0;
+        });
+
+        // Re-append items in the new order
+        const container = document.getElementById('portfolio-items');
+        visible.forEach(v => {
+            v.item.style.display = 'block';
+            v.item.classList.add('fade-in');
+            container.appendChild(v.item);
+        });
+        hidden.forEach(h => {
+            h.style.display = 'none';
+            h.classList.remove('fade-in');
+        });
+
+        updateCurrentlyFilteringText();
+    };
+
+    // Wire up filter buttons
+    filterButtons.forEach(button => {
+        const value = button.getAttribute('data-filter');
+        button.addEventListener('click', () => {
+            if (value === 'all') {
+                // Clear all other selections
+                selected.clear();
+                filterButtons.forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+            } else {
+                // Toggle this filter
+                const allBtn = filterButtons.find(b => b.getAttribute('data-filter') === 'all');
+                if (button.classList.contains('active')) {
+                    button.classList.remove('active');
+                    selected.delete(value);
+                } else {
+                    button.classList.add('active');
+                    selected.add(value);
+                }
+                // ensure 'All' is not active when specific filters are chosen
+                if (allBtn) allBtn.classList.remove('active');
+            }
+            filterItems();
+        });
+    });
+
+    // Wire up action buttons (priority / deprio)
+    const actionButtons = Array.from(document.querySelectorAll('.action-btn'));
+    actionButtons.forEach(a => {
+        a.addEventListener('click', (e) => {
+            const action = a.getAttribute('data-action');
+            const filter = a.getAttribute('data-filter');
+            if (action === 'priority') {
+                // toggle priority
+                if (priority.has(filter)) {
+                    priority.delete(filter);
+                    a.classList.remove('priority-active');
+                } else {
+                    priority.add(filter);
+                    deprio.delete(filter);
+                    a.classList.add('priority-active');
+                    // remove deprio button active if exists
+                    const dbtn = document.querySelector(`.action-btn[data-action="deprio"][data-filter="${filter}"]`);
+                    if (dbtn) dbtn.classList.remove('deprio-active');
+                }
+            } else if (action === 'deprio') {
+                if (deprio.has(filter)) {
+                    deprio.delete(filter);
+                    a.classList.remove('deprio-active');
+                } else {
+                    deprio.add(filter);
+                    priority.delete(filter);
+                    a.classList.add('deprio-active');
+                    const pbtn = document.querySelector(`.action-btn[data-action="priority"][data-filter="${filter}"]`);
+                    if (pbtn) pbtn.classList.remove('priority-active');
+                }
+            }
+            filterItems();
+        });
+    });
+
+    // Initial call to display all items
+    filterItems();
+
+    // Sidebar toggle functionality
+    const toggleButton = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sideBarForFiltering');
+    const portfolio = document.getElementById('portfolio');
+    
+    // Function to update portfolio margin based on sidebar state
+    const updatePortfolioMargin = () => {
+        if (!sidebar.classList.contains('closed')) {
+            portfolio.classList.add('sidebar-open');
+        } else {
+            portfolio.classList.remove('sidebar-open');
+        }
+    };
+
+    // Initial portfolio margin setup
+    updatePortfolioMargin();
+    
+    if (toggleButton) {
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('closed');
+            toggleButton.classList.toggle('closed');
+            updatePortfolioMargin();
+        });
+    }
+});
+
+    </script>
+    <link rel="stylesheet" href="portStyle.css"></link>
+        <style>
+            /* Filter Buttons Container */
+            #filter-buttons {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            /* Sidebar filter item (button + actions) */
+            .filter-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                margin-bottom: 6px;
+            }
+
+            .filter-actions {
+                display: none;
+                gap: 6px;
+            }
+
+            .filter-item:hover .filter-actions {
+                display: flex;
+            }
+
+            .action-btn {
+                font-size: 0.8em;
+                padding: 6px 8px;
+                border-radius: 6px;
+                border: 1px solid rgba(0,0,0,0.08);
+                cursor: pointer;
+                background: #fff;
+            }
+
+            .action-btn.priority-active {
+                background: #ffd54f;
+                border-color: #ffb300;
+            }
+
+            .action-btn.deprio-active {
+                background: #e0e0e0;
+                border-color: #9e9e9e;
+            }
+        </style>
+ <style>
+   .buttonHolder{
+    border:1px solid black;
+   }.buttonHolder:hover{
+        #specify{
+            display: block;
+        }
+   }
+   #specify{
+    display:none;
+   }
+ </style>
+    <body>
+        <div id="sideBarForFiltering">
+            <h2>Filter Projects</h2>
+            <div class="filter-item">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <div class="filter-actions"></div>
+            </div>
+
+            <div class="filter-item">
+                <button class="filter-btn" data-filter="web">Web Design</button>
+                <div class="filter-actions">
+                    <button class="action-btn" data-action="priority" data-filter="web">Priority</button>
+                    <button class="action-btn" data-action="deprio" data-filter="web">Deprioritize</button>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <button class="filter-btn" data-filter="graphic">Graphic Design</button>
+                <div class="filter-actions">
+                    <button class="action-btn" data-action="priority" data-filter="graphic">Priority</button>
+                    <button class="action-btn" data-action="deprio" data-filter="graphic">Deprioritize</button>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <button class="filter-btn" data-filter="app">App Development</button>
+                <div class="filter-actions">
+                    <button class="action-btn" data-action="priority" data-filter="app">Priority</button>
+                    <button class="action-btn" data-action="deprio" data-filter="app">Deprioritize</button>
+                </div>
+            </div>
+
+            <input type="text" placeholder="Filtering for..">
+        </div>
+        <button id="toggleSidebar">☰</button>
+        <section id="portfolio">
+        <h1>My Portfolio</h1>
+        
+        <h5 id="currentlyFiltering">Currently Filtering: </h5>
+
+        <!-- Filter Buttons -->
+
+        <!-- Portfolio Items -->
+        <div id="portfolio-items">
+            <!-- Portfolio Item 1 -->
+                <div class="portfolio-item" data-category="web">
+                    <img src="https://images.unsplash.com/photo-1542744094-3a31f272c490?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Web Design Project 1">
+                    <div class="overlay">
+                        <h3>Web Design Project 1</h3>
+                    </div>
+            </div>
+
+            <!-- Portfolio Item 2 (multi-category example: web + graphic) -->
+            <div class="portfolio-item" data-category="web graphic">
+                <img src="https://images.unsplash.com/photo-1726462987391-fbb6991a8248?q=80&w=2053&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Graphic + Web Project">
+                <div class="overlay">
+                    <h3>Graphic + Web Project</h3>
+                </div>
+            </div>
+
+            <!-- Portfolio Item 3 -->
+            <div class="portfolio-item" data-category="app">
+                <img src="https://images.unsplash.com/photo-1617471346061-5d329ab9c574?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="App Development Project 1">
+                <div class="overlay">
+                    <h3>App Development Project 1</h3>
+                </div>
+            </div>
+             <div class="portfolio-item" data-category="web app">
+                <img src="https://images.unsplash.com/photo-1617471346061-5d329ab9c574?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="App Development Project 1">
+                <div class="overlay">
+                    <h3>WEB APP</h3>
+                </div>
+            </div>
+             <div class="portfolio-item" data-category="web graphic app">
+                <img src="https://images.unsplash.com/photo-1617471346061-5d329ab9c574?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="App Development Project 1">
+                <div class="overlay">
+                    <h3>WEB APP GRAPHIC</h3>
+                </div>
+            </div>
+
+            <!-- Add more portfolio items as needed -->
+            <!-- ... -->
+        </div>
+    </section>
+    </body>
+    </html>

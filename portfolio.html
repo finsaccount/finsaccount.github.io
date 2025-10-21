@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Problem Portfolio</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="navbarStyling.css">
+        <link rel="stylesheet" href="portStyle.css">
+        <script src="darkMode.js" defer></script>
+    </head>
+   
+
+    <body>
+        <nav>
+            <ul class="navbar">
+                <li><a href="portfolio.html">Home</a></li>
+                <li id="darkModeActivator"><a href="javascript:void(0)" onclick="triggerDarkMode()"><span id="textOfDarkModeActivator">Dark Mode</span></a></li>
+            </ul>
+        </nav>
+        <div id="sideBarForFiltering" class="closed">
+            <h2>Filter Projects</h2>
+            <div class="filter-item">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <div class="filter-actions"></div>
+            </div>
+
+          <!-- <input type="text" placeholder="Filtering for..">--> 
+        </div>
+        <button id="toggleSidebar" class="closed">☰</button>
+        <section id="portfolio">
+        <h1>Problem Portfolio</h1>
+        
+        <h5 id="currentlyFiltering">Currently Filtering: </h5>
+
+        <!-- Portfolio Items -->
+        <div id="portfolio-items">
+            <!-- Portfolio Item 1 -->
+
+            <!-- Portfolio Item 2 (multi-category example: web + graphic) -->
+           <!-- <div class="portfolio-item" data-category="web graphic">
+                <img src="https://images.unsplash.com/photo-1726462987391-fbb6991a8248?q=80&w=2053&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Graphic + Web Project">
+                <div class="overlay">
+                    <h3>Graphic + Web Project</h3>
+                </div>
+            </div>
+            -->
+
+            <!-- Add more portfolio items as needed -->
+            <!-- ... -->
+        </div>
+    </section>
+</body>
+
+<script>
+// First load the portfolio items
+(async function() { //goes all the way to the bottom and tries like everything :) 
+    try {
+        const res = await fetch('portfolioItems.json');
+        const data = await res.json();
+        const container = document.getElementById('portfolio-items');
+        const categoriesAllTags= [];
+        // Create portfolio items
+        data.forEach(function(item){
+            const div = document.createElement('div');
+            div.className = 'portfolio-item';
+            div.setAttribute('data-category', item.tags.join(' '));
+            item.tags.join(' ').split(' ').forEach(tag => {
+                if (!categoriesAllTags.includes(tag)) {
+                    categoriesAllTags.push(tag);
+                }
+            });
+            div.innerHTML = `
+                <a href = "${item.path}" target="_blank">
+                <img src="${item.image}" alt="${item.title}">
+                <div class="overlay">
+                    <h3>${item.title}</h3>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        const container2 = document.getElementById('sideBarForFiltering');
+        categoriesAllTags.sort();
+        categoriesAllTags.forEach(function(item){
+            const div = document.createElement('div');
+            div.className = 'filter-item';
+            const button = document.createElement('button');
+            button.className = 'filter-btn';
+            button.setAttribute('data-filter', item);
+            button.textContent = item;
+            div.appendChild(button);
+            container2.appendChild(div);
+        });
+        console.log(categoriesAllTags);
+    // Select all filter buttons and portfolio items
+    const filterButtons = Array.from(document.querySelectorAll('.filter-btn'));
+    const portfolioItems = Array.from(document.querySelectorAll('.portfolio-item'));
+    const currentlyFilteringText = document.getElementById('currentlyFiltering');
+
+    // Keep a set of selected filters (empty = show all)
+    const selected = new Set();
+    // Keep sets for priority and deprioritize markers
+    const priority = new Set();
+    const deprio = new Set();
+
+    const updateCurrentlyFilteringText = () => {
+        if (!currentlyFilteringText) return;
+        if (selected.size === 0) {
+            currentlyFilteringText.innerText = 'Currently Filtering: All';
+        } else {
+            currentlyFilteringText.innerText = 'Currently Filtering: ' + Array.from(selected).join(', ');
+        }
+    };
+
+    // Function to filter portfolio items: show items that have ALL selected categories,
+    // then sort visible items by priority score and match count
+    const filterItems = () => {
+        if (selected.size === 0 && priority.size === 0 && deprio.size === 0) {
+            // no filters or markers: show all in original order
+            portfolioItems.forEach(item => {
+                item.style.display = 'block';
+                item.classList.add('fade-in');
+            });
+            updateCurrentlyFilteringText();
+            return;
+        }
+
+        const visible = [];
+        const hidden = [];
+
+        portfolioItems.forEach(item => {
+            const cats = (item.getAttribute('data-category') || '').split(/\s+/).filter(Boolean);
+            const hasAll = Array.from(selected).every(s => cats.includes(s));
+            if (selected.size > 0 && !hasAll) {
+                hidden.push(item);
+                item.style.display = 'none';
+                item.classList.remove('fade-in');
+                return;
+            }
+
+            // compute priority score: number of priority filters this item matches
+            let score = 0;
+            priority.forEach(pf => { if (cats.includes(pf)) score += 1; });
+            // deprioritize reduces score
+            deprio.forEach(df => { if (cats.includes(df)) score -= 1; });
+
+            const matchCount = cats.filter(c => selected.has(c)).length;
+            visible.push({ item, score, matchCount });
+        });
+
+        // Sort visible items: higher score first, then more selected-category matches
+        visible.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            if (b.matchCount !== a.matchCount) return b.matchCount - a.matchCount;
+            return 0;
+        });
+
+        // Re-append items in the new order
+        const container = document.getElementById('portfolio-items');
+        visible.forEach(v => {
+            v.item.style.display = 'block';
+            v.item.classList.add('fade-in');
+            container.appendChild(v.item);
+        });
+        hidden.forEach(h => {
+            h.style.display = 'none';
+            h.classList.remove('fade-in');
+        });
+
+        updateCurrentlyFilteringText();
+    };
+
+    // Wire up filter buttons
+    filterButtons.forEach(button => {
+        const value = button.getAttribute('data-filter');
+        button.addEventListener('click', () => {
+            if (value === 'all') {
+                // Clear all other selections
+                selected.clear();
+                filterButtons.forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+            } else {
+                // Toggle this filter
+                const allBtn = filterButtons.find(b => b.getAttribute('data-filter') === 'all');
+                if (button.classList.contains('active')) {
+                    button.classList.remove('active');
+                    selected.delete(value);
+                } else {
+                    button.classList.add('active');
+                    selected.add(value);
+                }
+                // ensure 'All' is not active when specific filters are chosen
+                if (allBtn) allBtn.classList.remove('active');
+            }
+            filterItems();
+        });
+    });
+
+    // Initial call to display all items
+    filterItems();
+
+    // Sidebar toggle functionality
+    const toggleButton = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sideBarForFiltering');
+    const portfolio = document.getElementById('portfolio');
+    const dmA = document.getElementById('darkModeActivator');
+    // Function to update portfolio margin based on sidebar state
+    const updatePortfolioMargin = () => {
+        if (!sidebar.classList.contains('closed')) {
+            portfolio.classList.add('sidebar-open');
+            dmA.classList.add('openDMA');
+        } else {
+            portfolio.classList.remove('sidebar-open');
+            dmA.classList.remove('openDMA');
+        }
+    };
+
+        // Initial portfolio margin setup
+        updatePortfolioMargin();
+        
+        if (toggleButton) {
+            toggleButton.addEventListener('click', () => {
+                sidebar.classList.toggle('closed');
+                toggleButton.classList.toggle('closed');
+                updatePortfolioMargin();
+            });
+        }
+    } catch (error) {
+        console.error('Error loading portfolio items:', error);
+    }
+})();
+</script>
+    <script src="darkMode.js"></script>
+
+</html>
