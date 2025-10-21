@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem 1</title>
+
+    <!-- Local styles (parent folder) -->
+    <link rel="stylesheet" href="../portStyle.css">
+    <link rel="stylesheet" href="../navbarStyling.css">
+
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<style>
+    h3{
+        font-weight:normal;
+        font-style:italic;
+    }
+</style>
+<body>
+    <nav>
+        <ul class="navbar">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="#proof">Proof</a></li>
+            <li id="darkModeActivator"><a href="javascript:void(0)" onclick="triggerDarkMode();"><span id="textOfDarkModeActivator">Dark Mode</span></a></li>
+        </ul>
+    </nav>
+    <h1 id="title">Bunyakovsky-Schwartz-Cauchy Inequality</h1>
+    <h3><i> or as I like to call it the BCS/CBS inequality</i></h3>
+    <div id ="proof">
+        <h2>Proof:</h2><br>
+         The Bunyakovsky-Schwartz-Cauchy Inequality states that for any two vectors,  $ p,  q\in \mathbb{R}^{n} $ then $ \left| p \cdot {q} \right| \geq \|\mathbf{p}\|\|\mathbf{q}\|$ this equality only holds if and only if $p$ and $q$ are parallel.
+         <br><br>
+    Recall $x \in \mathbb{R}^{n} $,  for each $x$ $ x \cdot x \geq 0$ and $ x \cdot x = 0$, if and only if, $x$ = 0. 
+ 
+    Note: The theorem is true if $p$ or $q$ is 0, so assume $p \neq 0$ and $q \neq 0$.
+  <br><br>
+Consider all linear combinations of $ap$ + $bq$ ($ a,b \in \mathbb{R}^{1}$). Since the dot product of any vector with itself is $\geq 0, (ap + bq)\cdot(ap+bq) \geq 0$ . 
+ 
+This simplifies into:
+\[ ap \cdot (ap + bq) + bq\cdot(ap+bq)\
+\] which further simplifies into 
+\[
+(ap)\cdot(ap)+(ap)\cdot(bq) + (bq)\cdot(ap)+(bq)\cdot(bq)
+\] Recall that $(cx \cdot y)= c(x\cdot y)$ meaning that:
+ 
+\[
+a^2 (p \cdot p) + ab (p \cdot q) + ba(q \cdot p) + b^2 (q \cdot q)
+\] Note $p\cdot q = q \cdot p$ : 
+\[
+    a^2 \|\mathbf{p}\|^2 + 2ab(p\cdot q)+b^2 \|\mathbf{q}\|^2
+\]
+Therefore:
+\[
+    a^2 \|\mathbf{p}\|^2 + 2ab(p\cdot q)+b^2 \|\mathbf{q}\|^2 \geq 0
+\]so for any $a, b \in \mathbb{R}^{n} $. By simplifying:
+\[
+    a^2 \|\mathbf{p}\|^2 +b^2 \|\mathbf{q}\|^2 \geq -2ab(p\cdot q)
+\] 
+If we let $ a = \|\mathbf{q}\|$ 
+and $ b = \|\mathbf{p}\|$, then 
+\[
+-2\|\mathbf{q}\|\|\mathbf{p}\|(p\cdot q) \leq \|\mathbf{q}\|^2 \|\mathbf{p}\|^2 + \|\mathbf{p}\|^2 \|\mathbf{q}\|^2
+\]
+\[
+-2\|\mathbf{q}\|\|\mathbf{p}\|(p\cdot q) \geq 2 \|\mathbf{q}\|^2\|\mathbf{p}\|^2
+\]
+then by diving by $2\|\mathbf{q}\|\|\mathbf{p}\|$ gives:
+\[
+-(p\cdot q) \geq \|\mathbf{q}\|\|\mathbf{p}\|\
+\]
+Note: this says that for every pair $p,q \in \mathbb{R}$
+\[
+-[p\cdot q] \leq \|\mathbf{q}\|\|\mathbf{p}\|\
+\]
+so this must hold for $-p$,$q$ in place of $p$, $q$
+\[
+-((-p)\cdot q) \leq \|\mathbf{-p}\|\|\mathbf{q}\|\
+\]
+leaving
+\[
+(-1)(-1)(p\cdot q) \leq \|\mathbf{p}\|\|\mathbf{q}\|\
+\]
+simplifies into:
+\[
+p\cdot q \leq \|\mathbf{p}\|\|\mathbf{q}\|\
+\] and then:
+\[
+-p \cdot q \geq - \|\mathbf{p}\|\|\mathbf{q}\|\
+\] so
+\[
+-(p \cdot q)\leq p \cdot q \leq \|\mathbf{p}\|\|\mathbf{q}\|\
+\]
+so 
+\[
+\left| p \cdot q \right| \leq
+\|\mathbf{q}\|\|\mathbf{p}\|\
+\]
+Note that the equality holds foregoing when $ ap + bq \cdot (ap+bq) = 0 $ However, then $ ap + bq = 0$ so either:
+\[
+    p = \frac{-b}{a} q  \text{ or } q = \frac{-a}{b}{p} 
+\]
+therefore:
+\[
+p \parallel q
+\]
+</div>
+                </span>
+           </div>
+    </body> 
+        <!-- MathJax -->
+        <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+
+        <!-- Dark mode behavior (use local copy in parent folder) -->
+        <script defer src="../darkMode.js"></script>
+
+        <script>
+        // MathJax config
+        MathJax = {
+            tex: {
+                inlineMath: {'[+]': [['$', '$']]}
+            }
+        };
+        </script>
+</body>
+</html>
