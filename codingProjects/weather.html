@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Playground</title>
+
+    <!-- Local styles - note the ../ to go up one directory -->
+    <link rel="stylesheet" href="../navbarStyling.css">
+    <link rel="stylesheet" href="../portStyle.css">
+    
+    <!-- External styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.10.1/core.css">
+    
+    <!-- Dark mode script - note the ../ to go up one directory -->
+    <script defer src="../darkMode.js"></script>
+    
+    <!-- PyScript -->
+    <script type="module" src="https://pyscript.net/releases/2024.10.1/core.js"></script>
+    <title>Weather Application :P</title>
+  </head>
+  <body>
+    <nav>
+        <ul class="navbar">
+            <li><a href="/index.html">Home</a></li>
+            <li id="darkModeActivator">
+                <a href="javascript:void(0)" onclick="triggerDarkMode()">
+                    <span id="textOfDarkModeActivator">Dark Mode</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <h1>Weather Application</h1>
+    <p> Click The Button Below to Allow GeoLocation :D </p>
+    <button onclick="getLocation()">Allow</button>
+    <button id="weatherShow" py-click="showWeatehr">Weather Show</button>
+    <div id="successLocation"></div>
+
+    <script>
+        const x = document.getElementById("successLocation");
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error);
+            } else { 
+                x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+        }
+        function success(position) {
+            x.innerHTML = "Latitude: " + position.coords.latitude + 
+            "<br>Longitude: " + position.coords.longitude;
+            document.getElementById('weatherShow').click();
+            }
+        function error() {
+            alert("Sorry, no position available.");
+        }
+        document.addEventListener('keydown',function(event){
+            if(event.key ==='Enter'){
+                document.getElementById('submitBTN').click();
+            }
+        })
+    </script>
+    <br><br>
+    <div>
+        <p>This is run with Python code inside of a website. It's utilizing py-script.</p>
+    </div>
+     <script type="py" src="./weather.py" config="./pyscript.json"></script>
+  </body>
+</html>

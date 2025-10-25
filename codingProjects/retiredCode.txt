@@ -1,0 +1,318 @@
+        p.push();
+        p.translate(p.width/2, p.height/2);
+
+        if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
+            const lineStartX = p.mouseX - p.width/2;
+            const lineStartY = p.mouseY - p.height/2;
+            const lineEndX = p.pmouseX - p.width/2;
+            const lineEndY = p.pmouseY - p.height/2;
+            const speed = p.dist(p.mouseX, p.mouseY, p.pmouseX, p.pmouseY);
+            const strokeWeightValue = p.map(speed, 0, 20, 5, 1);
+
+            if (p.mouseIsPressed) {
+                for (let i = 0; i < symmetry; i++) {
+                    // isolate each rotated/mirrored draw so transforms don't accumulate
+                    p.push();
+                    p.rotate(angle * i);
+                    p.stroke(f1, f2, f3);
+                    p.strokeWeight(strokeWeightValue);
+                    p.line(lineStartX * easing, lineStartY * easing, lineEndX * easing, lineEndY * easing);
+                    // mirror along horizontal axis
+                    p.push();
+                    p.scale(1, -1);
+                    p.line(lineStartX, lineStartY, lineEndX, lineEndY);
+                    p.pop();
+                    p.pop();
+                }
+            }
+
+
+
+
+orbit CONTROL 
+function sketch2(p) {
+       p.setup = function() {
+        const canvas = p.createCanvas(500, 500, p.WEBGL);
+        canvas.parent(document.querySelector('.canvas-container'));
+        p.angleMode(p.DEGREES);
+        p.strokeWeight(5);
+        p.noFill();
+        // use a subtle stroke color (RGB)
+        p.stroke(80, 80, 160);
+    };
+    
+    p.draw = function() {
+        // use a neutral background in RGB so it's predictable
+        p.background(30);
+        p.orbitControl();
+        for(let zAngle = 0; zAngle<180; zAngle+=30){
+            for(let xAngle =0; xAngle <360; xAngle+=30){
+                p.push();
+                p.rotateZ(zAngle);
+                p.rotateX(xAngle);
+                p.translate(0,400,0);
+                p.ellipse();
+                p.pop();
+            }
+        }
+    };
+}
+
+
+//oop
+class Hexagon {
+  constructor(x, y, r) {
+    this.x = x;
+    this.y = y;
+    this.r = r;
+    this.color = color(random(255), random(255), random(255));
+    this.neighbors = [];
+  }
+
+  display() {
+    fill(this.color);
+    beginShape();
+    for (let a = 0; a < TAU; a += TAU / 6) {
+      let x = this.x + this.r * cos(a);
+      let y = this.y + this.r * sin(a);
+      vertex(x, y);
+    }
+    endShape(CLOSE);
+  }
+}
+/*
+let hexagons = [];
+let edges = [];
+let drawIndex = 0;
+let hexagonSize;
+let w;
+
+function setup() {
+  w = min(windowWidth, windowHeight);
+  w = w / 1.05;
+  createCanvas(w, w);
+  hexagonSize = w / 10;
+  makeGrid();
+  stroke(255);
+  strokeWeight(2);
+  noFill();
+  frameRate(30);
+}
+
+function makeGrid() {
+  hexagons = [];
+  let gridWidth = w;
+  let gridHeight = w;
+  let count = 0;
+
+  for (let y = 0; y < gridHeight + hexagonSize; y += hexagonSize / 2.3) {
+    for (let x = 0; x < gridWidth; x += hexagonSize * 1.5) {
+      let offsetX = (count % 2 == 0) ? hexagonSize * 0.75 : 0;
+      let hex = createHexagon(x + offsetX, y, hexagonSize / 2);
+      hexagons.push(hex);
+    }
+    count++;
+  }
+
+  // flatten hex edges into one big list
+  for (let h of hexagons) {
+    for (let i = 0; i < h.length; i++) {
+      let a = h[i];
+      let b = h[(i + 1) % h.length];
+      edges.push({ a, b });
+    }
+  }
+}
+
+function createHexagon(cX, cY, r) {
+  let verts = [];
+  for (let a = 0; a < TAU; a += TAU / 6) {
+    let xC = cX + r * cos(a);
+    let yC = cY + r * sin(a);
+    verts.push(createVector(xC, yC));
+  }
+  return verts;
+}
+
+function draw() {
+  background(0);
+  
+  // Draw already-drawn edges
+  for (let i = 0; i < drawIndex && i < edges.length; i++) {
+    let e = edges[i];
+    line(e.a.x, e.a.y, e.b.x, e.b.y);
+  }
+
+  // Draw next edge slowly
+  if (drawIndex < edges.length) {
+    let e = edges[drawIndex];
+    line(e.a.x, e.a.y, e.b.x, e.b.y);
+    drawIndex++;
+  } else {
+    noLoop(); // stop when all edges drawn
+  }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+
+
+*/
+
+//bezier
+/*p.setup = function() {
+        const canvas = p.createCanvas(500, 500);
+        canvas.parent(document.querySelector('.canvas-container'));
+        p.noFill();
+        p.background(255);
+    };
+    p.draw = function() {
+        for(var i =0; i<200; i+=20){
+            p.bezier(p.mouseX - (i/2.0), p.mouseY- (i/2.0), 410, 20, 440, 300, 240-(i/16.0),300+(i/8.0));
+        }
+    };*/
+
+
+
+
+
+
+    /*
+        for (let x = 0; x < canvas.width; x += 55) {
+            for (let y = 0; y < canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.arc(x, y, 15, 0, Math.PI * 2);
+                let rando = Math.floor(Math.random()*(100-1))+1;
+                ctx.fillStyle = `rgba(${(x*y) % 360}, ${(x) % 360},${(y) % 360}, 0.3)`;
+                ctx.fill();
+            }
+        }
+*/
+       /* for(let i =0; i<500; i++){
+            let x = Math.random()*canvas.width;
+            let y = canvas.height/2 + Math.sin(x*0.05)*100;
+            ctx.beginPath();
+            ctx.arc(x,y,5,0,Math.PI*2);
+            
+            ctx.fillStyle = `rgba(0, ${(x + y) % 360}, 200, 0.5)`;
+            ctx.fill();
+        }
+        */
+       //CIRCLE
+       /*
+        let circleGen;
+    function setup(){
+	    createCanvas(400, 400)
+	    background(0);
+	    circleGen = generateCircles()
+    }
+
+function draw(){
+	let nxt = circleGen.next()
+	if(nxt.done){
+        console.log('DONE')
+		noLoop()
+	}
+}
+    function* generateCircles(){
+	for(let n = 0; n < 100; n++){
+		fill(random(255),random(255),random(255))
+		ellipse(random(400), random(400), random(100))
+		yield 1 // doesn't matter what we yield here actually
+	}
+}
+    */
+// LEARNING P5.JS
+/*function draw(){
+    /*if(mouseIsPressed === true){ if mouse is pressed print them in the color blue else yellow
+        fill("aqua");
+    }else{
+        fill("yellow");
+    }
+    circle(mouseX,mouseY,100);
+    */ 
+    //    line(mouseX,mouseX,mouseY, 1); this has promising
+        //let nxt = gen1.next();
+
+    /*
+    //randomly place circles for the rest of time
+    let x = random(width);
+    let y = random(height);
+    let size = random(10,50);
+    let color = "red";
+    fill(color);
+    noStroke();
+    ellipse(x,y, size, size);
+    */
+//}
+
+
+/*function* Generating(){
+    for(let i =0; i<500; i++){
+        fill(random(255),random(231),random(255));
+        ellipse(mouseX, mouseY, 10);
+        yield 1;
+    }
+}
+*/
+//generator functions have the function* name(){}
+
+
+// Don't run the drawing loop until the user clicks the button.
+/*let circleGen;
+let running = false;
+const btn = document.getElementById('circleGen');
+
+function setup() {
+    createCanvas(500, 500);
+    background(0);
+    // Stop automatic looping; we'll start it when the button is clicked
+    noLoop();
+
+    // Attach DOM button listener to start the generator
+    if (btn) {
+        btn.addEventListener('click', () => {
+            if (!running) {
+                circleGen = generateCircles();
+                loop(); // start p5 draw loop
+                running = true;
+            }
+        });
+    }
+}
+
+function draw() {
+    // Each draw call advances the generator one step
+    if (circleGen) {
+        const nxt = circleGen.next();
+        if (nxt.done) {
+            console.log('DONE');
+            noLoop();
+            running = false;
+        }
+    }
+}
+
+function* generateCircles() {
+    for (let n = 0; n < 100; n++) {
+        fill(random(255), random(255), random(255));
+        ellipse(random(400), random(400), random(100));
+        yield 1; // advance step
+    }
+}
+
+*/
+/*let x=0;
+        function animate(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle='#FF0000';
+            ctx.fillRect(x,50,50,50);
+            x+=2;
+            if(x>canvas.width)x=0;
+            requestAnimationFrame(animate);
+        }
+        animate();
+*/
+
+//HEXAGON === https://www.gorillasun.de/blog/a-guide-to-hexagonal-grids-in-p5js/

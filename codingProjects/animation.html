@@ -1,0 +1,308 @@
+<!Doctype html>
+<head>
+        <link rel="stylesheet" href="../navbarStyling.css">
+    <link rel="stylesheet" href="../portStyle.css">
+    
+    <!-- External styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.10.1/core.css">
+    <!-- Dark mode script - note the ../ to go up one directory -->
+    <script defer src="../darkMode.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.8.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.8.0/addons/p5.sound.min.js"></script>
+</head>
+<style>
+    .AnimOptions{
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        align-content: stretch;
+
+        gap: 8px;
+        padding: 16px;
+        width:40%;
+        background-color:blue;
+    }.canvas-container {
+        display: flex;
+        justify-content: center;
+    }
+   
+    #kaleidoscopeMoreOptions{
+        display:none;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: stretch;
+        flex-wrap: wrap;
+        gap: 8px;
+        background-color:lightgrey;
+        color:black;
+        width:auto;
+        border:1px solid black;
+    }input[type=radio],input.radio{
+        float:left;
+        clear:none;
+        margin:2px 0 0 2px;
+        margin-right:5px;
+    }.mO{
+        float:left;
+        clear:none;
+        display:block;
+    }
+    #showCaseDivider {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 20px;
+        gap: 20px;
+        box-sizing: border-box;
+        height: calc(100vh - 80px); /* Full viewport height minus nav and padding */
+    }
+
+    .flex-item {
+        padding: 12px;
+        background-color: #f3f4f6;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+    }
+
+    /* Canvas container - responsive size */
+    .canvas-container {
+        width: 75%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden; /* Prevent scrolling */
+    }
+
+    /* Options container - remaining width */
+    #barOfChoice {
+        width: 25%;
+        min-width: 200px;
+        height: fit-content;
+        background-color: #f3f4f6;
+        padding: 15px;
+        color:black;
+    }
+    #moreOptionsForGrid{
+        display:none;
+    }
+    .more{
+        background-color:aquamarine;
+        color:black;
+        display:inline-block;
+        font-size:1rem;
+        padding:0.25rem;
+        border:0px;
+        border-radius:6px;
+    }
+</style>
+<body>
+    <nav>
+        <ul class="navbar">
+            <li><a href="/index.html">Home</a></li>
+            <li id="darkModeActivator">
+                <a href="javascript:void(0)" onclick="triggerDarkMode()">
+                    <span id="textOfDarkModeActivator">Dark Mode</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+<div id="showCaseDivider">
+    <div class="flex-item canvas-container"></div>
+
+    <!-- <canvas id="artCanvas" width="800" height="300"></canvas> -->
+<div id="barOfChoice" class="flex-item kaleidoscopeMoreOptions">
+     <div class="kalidoscope">
+        
+            <input type="radio" name="optionChoice" class= "kalido" id="kalido"></input>
+        <label class="radio mO" >Kaleidoscope</label>
+        <br>
+            <div id="kaleidoscopeMoreOptions">
+                <p class="randomO">
+
+                    <input type="radio" name="pickingK" class="pick" id="randomK"></input>
+                    <label class="mO" for="random"> Random</label> 
+                </p>
+                <br>
+                <p class="randomO">
+                <input type="radio" name="pickingK" id="choiceK">
+                    <input type="color" id="myInput" id="choiceK"></input>
+                </input>
+                <label class="mO" for="color" > Color: </label>
+                </p>
+
+            </div>
+     </div>
+     <br>
+     <div>
+        <input type="radio" name="optionChoice" value="grid" id="grid">
+        <label class="radio mO">Grid</label>
+            <br><span id="moreOptionsForGrid"><button class="more" id="newGrid">New Grid</button></span>
+     </div>
+</div>
+</div>
+
+    <script>
+
+//CURRENT ONE IS GOING TO BE A KALIDO SCOPE BUT ITLL FADE OVER TIME SO ITS LIKE AN INFINITE
+let symmetry = 6; 
+let angle = 360/symmetry;
+let fadinLines = [];
+let currentSketch = null;
+var easing =0.3;
+let hueValue = 0; 
+let rColor;
+let w = window.innerWidth - document.getElementById("barOfChoice").width;
+let wh = window.innerHeight;
+function sketch1(p) {
+    let rr, rb, rg;
+    let w;
+    p.setup = function() {
+        const container = document.querySelector('.canvas-container');
+        // Use the smaller of: 75% of window width or 90% of available height
+        const maxWidth = container.offsetWidth;
+        const maxHeight = container.offsetHeight;
+        const size = Math.min(maxWidth, maxHeight);
+        const canvas = p.createCanvas(size, size);
+        canvas.parent(container);
+        p.background(0);
+        p.angleMode(p.DEGREES);
+        p.colorMode(p.RGB);  // Switch to RGB for proper color handling
+    };
+    
+    p.draw = function() {
+        p.translate(p.width/2, p.height/2);
+        const p1 = document.getElementById('randomK');
+        const p2 = document.getElementById('choiceK');
+        const colorInput = document.getElementById('myInput');
+        if(p1.checked){
+            rr = p.random(255);
+            rb = p.random(255);
+            rg = p.random(255);
+            rColor = p.color(rr, rg, rb);
+        } else if(p2.checked) {
+            rColor = colorInput.value;
+        }
+        if(p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+            let lineStartX = p.mouseX - p.width/2;
+            let lineStartY = p.mouseY - p.height/2;
+            let lineEndX = p.pmouseX - p.width/2;
+            let lineEndY = p.pmouseY - p.height/2;
+        
+            if(p.mouseIsPressed) {
+                for(let i = 0; i < symmetry; i++) {
+                    p.rotate(angle);
+                    p.stroke(rColor);
+                    p.strokeWeight(2);
+                    p.line(lineStartX, lineStartY, lineEndX, lineEndY);
+                    p.push();
+                    p.scale(1, -1);
+                    p.line(lineStartX, lineStartY, lineEndX, lineEndY);
+                    p.pop();
+                }
+            }
+            hueValue = (hueValue+0.8)%360;
+        }
+    };
+}
+    let sR, sG, sB;
+function sketch2(p) { //hexagon grid where the color the hexagons are filled in as are randomly done but theyre also gradually 
+   
+    p.setup = function(){
+        sR = p.random(255);
+        sG = p.random(255);
+        sB = p.random(255);
+        const container = document.querySelector('.canvas-container');
+        const size = Math.min(container.offsetWidth, container.offsetHeight);
+        const canvas = p.createCanvas(size, size);
+        canvas.parent(container);
+        w= size;
+        //p.blendMode(p.DARKEST);
+        gridWidth = w;
+        gridHeight = w;
+        hexagonSize = w/10;
+    }
+    function drawHexagon(cX, cY, r, count){
+        if(count == 0){
+            p.fill(sR, sG, sB);
+        }else{
+            let multiplier = count*5;
+            p.fill(sR+multiplier, sG+multiplier, sB+multiplier);
+        }
+        p.beginShape()
+        for(let a = 0; a < p.TAU; a+=p.TAU/6){
+            p.vertex(cX + r * p.cos(a), cY + r *p.sin(a))
+        }
+        p.endShape(p.CLOSE)
+}
+    function makeGrid(){
+        count = 0
+        for(y = 0; y < gridHeight+hexagonSize; y+=hexagonSize/2.3){
+            for(x = 0; x < gridWidth; x+=hexagonSize*1.5){
+                drawHexagon(x+hexagonSize*(count%2==0)*0.75, y, hexagonSize/2, count)
+            }
+        count ++
+        }
+}
+    p.draw=function(){
+        p.background(0);
+        p.noStroke();
+        makeGrid();
+        p.noLoop();
+}
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+}
+// Track current active sketch
+let currentSketchInstance = null;
+
+// Attach event listeners to radio buttons for sketch switching
+document.addEventListener('DOMContentLoaded', function() {
+    const gridRadio = document.getElementById('grid');
+    const kalidoRadio = document.getElementById('kalido');
+    const moreGrid = document.getElementById('moreOptionsForGrid');
+    function switchSketch() {
+        if (currentSketchInstance) {
+            currentSketchInstance.remove();
+        }
+        if (gridRadio.checked) {
+            document.getElementById('kaleidoscopeMoreOptions').style.display = "none";
+           moreGrid.style.display="block";
+            currentSketchInstance = new p5(sketch2);
+            moreGrid.addEventListener('click', function(){
+                currentSketchInstance.remove();
+                currentSketchInstance = new p5(sketch2);
+            });
+        } else if (kalidoRadio.checked) {
+            document.getElementById('kaleidoscopeMoreOptions').style.display = "flex";
+            const p1 = document.getElementById('randomK');
+            const p2 = document.getElementById('choiceK');
+            if(p1.checked || p2.checked){
+                currentSketchInstance = new p5(sketch1);
+            }
+        }
+    }
+
+    // Add listeners for the color choice radio buttons
+    document.getElementById('randomK').addEventListener('change', switchSketch);
+    document.getElementById('choiceK').addEventListener('change', switchSketch);
+
+    gridRadio.addEventListener('change', switchSketch);
+    kalidoRadio.addEventListener('change', switchSketch);
+
+    // Optionally, initialize the correct sketch on page load
+    switchSketch();
+});
+
+
+</script>
+</body>
+</html>

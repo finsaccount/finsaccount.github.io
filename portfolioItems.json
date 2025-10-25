@@ -2,13 +2,29 @@
     {
         "path":"PortfolioWebPages/Problem1.html",
         "tags":["Geometry","Parallelograms","Showcase"],
-        "image":"P1Image.png",
+        "image":"images/P1Image.png",
+        "category":"math",
         "title":"Problem 1: Parallelogram and Quadrilateral Proof"
     },
     {
         "path":"PortfolioWebPages/BSC.html",
         "tags":["Triangle","Geometry","Vectors"],
-        "image":"cbs.png",
+        "image":"images/cbs.png",
+        "category":"math",
         "title":"BSC INEQUALITY"
+    },
+    {
+        "path":"codingProjects/pyT1.html",
+        "tags":["Python","Game"],
+        "image":"https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.pngall.com%2Fwp-content%2Fuploads%2F2%2FQuestion-Mark-PNG-File.png&f=1&nofb=1&ipt=96f7b4e6f316c9e9e0ef2e77c22b1b63ff5350f8c033c86c865f53c973232ba5",
+        "category":"code",
+        "title":"Number Guessing Game"
+    },
+    {
+        "path":"codingProjects/animation.html",
+        "tags":["art"],
+        "image":"images/p5JsLogo.png",
+        "category":"code",
+        "title":"A Showcase of P5.JS"
     }
 ]

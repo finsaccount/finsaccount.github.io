@@ -21,22 +21,15 @@ body {
 #portfolio.sidebar-open {
     margin-right: calc(25% + 20px);
 }
-h1{
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-    text-align: center;
-    margin-bottom: 40px;
-    font-size: 3em;
-    color: #333;
-}
-/* Section Heading */
+/* Section Heading 
 #portfolio h1 {
     text-align: center;
     margin-bottom: 40px;
     font-size: 3em;
     color: #333;
 }
-
+*/
 /* Filter Buttons Container */
 #filter-buttons {
     text-align: center;
